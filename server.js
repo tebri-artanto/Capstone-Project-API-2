@@ -6,6 +6,7 @@ const cors = require('cors');
 
 const userRoutes = require('./modules/Routes/userRoutes');
 const pengepulRoutes = require('./modules/Routes/pengepulRoutes');
+const artikelRoutes = require('./modules/Routes/ArtikelRoutes');
 
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(bodyParser.json());
 // Routes
 app.use('/', userRoutes);
 app.use('/pengepul', pengepulRoutes);
+app.use('/artikel', artikelRoutes);
 
 // Start the server
 app.get("/", (req, res) => {
