@@ -3,77 +3,180 @@ const processFile = require("../middleware/uploadImg");
 const { format } = require("util");
 const Artikel = require('../Model/Artikel');
 const httpStatus = require("http-status");
-const Multer = require('multer');
+const multer = require('multer');
 const Response = require("../Model/Response");
 const path = require('path');
-const pathKey = path.resolve('/capstone-project-387217-3c13c63e22f6.json')
+const maxSize = 10 * 1024 * 1024;
+const pathKey = path.resolve('/serviceaccountkey.json')
 
 const storage = new Storage({
-    projectId: 'capstone-project-387217',
-    credentials: pathKey
+  projectId: 'capstone-project-387217',
+  keyFilename: './serviceaccountkey.json'
 });
 
+//Konfigurasi multer untuk menyimpan file yang diunggah
+const upload = multer({
+  storage: multer.diskStorage({}),
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = ['image/jpeg', 'image/png'];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file format. Only JPEG, PNG files are allowed.'));
+    }
+  },
+});
 
-// TODO: Tambahkan nama bucket yang digunakan
-const bucketName = 'storing-image-artikel'
-const bucket = storage.bucket(bucketName)
-
+// const upload = multer({
+//   storage: multer.memoryStorage(),
+//   limits: { fileSize: maxSize },
+// });
 
 const postArtikel = async (req, res) => {
-    let response = null;
-    try{
+  // if (!req.file) {
+  //   return res.status(400).send('No File Uploaded.');
+  // }
 
-        await processFile(req, res);
-    
-        if (!req.file) {
-          const response = new Response.Error(400, "Please upload a image!" );
-          return res.status(httpStatus.BAD_REQUEST).json(response);
-        }
+   const bucketName = storage.bucket('storing-image-artikel');
+   
+   await processFile(req, res);
+  if (!req.file) {
+    const response = new Response.Error(400, "Please upload a image!" );
+    return res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+  // const file = storage.bucket('storing-image-artikel').file(req.file.originalname.toLowerCase().split(" ").join("-"));
 
-        const ext = req.file.originalname.split('.').pop();
-        if (ext !== "png" && ext !== "jpg" && ext !== "jpeg" && ext !== "PNG" && ext !== "JPG" && ext !== "JPEG") {
-          const response = new Response.Error(400, "Only images are allowed" );
-          return res.status(httpStatus.BAD_REQUEST).json(response);
-        }
-    
-        const blob = bucket.file("images/" + req.file.originalname.toLowerCase().split(" ").join("-"));
-        const blobStream = blob.createWriteStream({
-          resumable: false,
-        });
-    
-        blobStream.on("error", (err) => {
-          const response = new Response.Error(500, err.message );
-          return res.status(httpStatus.BAD_REQUEST).json(response);
-        });
-    
-        blobStream.on("uploaded", async (data) => {
-          const artikelUrl = format(
-            `https://storage.googleapis.com/${bucket.name}/${blob.name.toLowerCase()}`
-          );
-        });
-        const { title, content } = req.body;
+  // await file.save(req.file.path);
 
+  
 
-        const artikelUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name.toLowerCase().split(" ").join("-")}`;
-        // const requestName = req.file.originalname.replace(/\.[^/.]+$/, "");
-        // const artikelName = requestName.charAt(0).toUpperCase() + requestName.slice(1);
-        
-        const artikel = new Artikel({
-            title,
-            content,
-            imgUrl: artikelUrl,
-        });
+  const ext = req.file.originalname.split('.').pop();
+  if (ext !== "png" && ext !== "jpg" && ext !== "jpeg" && ext !== "PNG" && ext !== "JPG" && ext !== "JPEG") {
+    const response = new Response.Error(400, "Only images are allowed" );
+    return res.status(httpStatus.BAD_REQUEST).json(response);
+  }
 
-        const artikelSave = await artikel.save();
-        response = new Response.Success(false, null, artikelSave);
-        res.status(httpStatus.OK).json(response);
+  const blob = bucketName.file("/" + req.file.originalname.toLowerCase().split(" ").join("-"));
+  const blobStream = blob.createWriteStream({
+    resumable: false,
+  });
 
-        blobStream.end(req.file.buffer);
-    } catch (error) {
-    response = new Response.Error(true, error.message);
-    res.status(httpStatus.BAD_REQUEST).json(response);
+  blobStream.on("error", (err) => {
+    const response = new Response.Error(500, err.message );
+    return res.status(httpStatus.BAD_REQUEST).json(response);
+  });
+
+  blobStream.on("uploaded", async (data) => {
+    const artikelUrl = format(
+      `https://storage.googleapis.com/${bucketName.name}/${blob.name.toLowerCase()}`
+    );
+  });
+  
+
+  const artikelUrl = `https://storage.googleapis.com/${bucketName.name}/${blob.name.toLowerCase().split(" ").join("-")}`;
+ 
+
+  //const imageUrl = `https://storage.googleapis.com/${bucketName}/${file.name}`;
+
+  // Menyimpan data gambar ke MongoDB
+  const { title, content } = req.body;
+  const image = new Artikel({ title, content, imgUrl: artikelUrl });
+
+  try {
+    await image.save();
+    return res.status(200).json({ url: artikelUrl });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send('Internal server error.');
   }
 };
+
+module.exports = {
+  // upload: upload.single('image'),
+  postArtikel,
+};
+
+// const storage = new Storage({
+//   projectId: 'capstone-project-387217',
+//   keyFilename: './serviceaccountkey.json'
+// });
+
+// const upload = multer({
+//   storage: multer.diskStorage({}),
+//   fileFilter: (req, file, cb) => {
+//     const allowedMimes = ['image/jpeg', 'image/png'];
+//     if (allowedMimes.includes(file.mimetype)) {
+//       cb(null, true);
+//     } else {
+//       cb(new Error('Invalid file format. Only JPEG, PNG files are allowed.'));
+//     }
+//   },
+// });
+
+
+
+// const bucketName = 'storing-image-artikel';
+
+
+// const postArtikel = async (req, res) => {
+//     let response = null;
+//     try{
+
+//         // await processFile(req, res);
+    
+//         if (!req.file) {
+//           const response = new Response.Error(400, "Please upload a image!" );
+//           return res.status(httpStatus.BAD_REQUEST).json(response);
+//         }
+
+//         const ext = req.file.originalname.split('.').pop();
+//         if (ext !== "png" && ext !== "jpg" && ext !== "jpeg" && ext !== "PNG" && ext !== "JPG" && ext !== "JPEG") {
+//           const response = new Response.Error(400, "Only images are allowed" );
+//           return res.status(httpStatus.BAD_REQUEST).json(response);
+//         }
+    
+        // const blob = bucket.file("images/" + req.file.originalname.toLowerCase().split(" ").join("-"));
+        // const blobStream = blob.createWriteStream({
+        //   resumable: false,
+        // });
+    
+        // blobStream.on("error", (err) => {
+        //   const response = new Response.Error(500, err.message );
+        //   return res.status(httpStatus.BAD_REQUEST).json(response);
+        // });
+    
+//         // blobStream.on("uploaded", async (data) => {
+//         //   const artikelUrl = format(
+//         //     `https://storage.googleapis.com/${bucket.name}/${blob.name.toLowerCase()}`
+//         //   );
+//         // });
+
+        
+//         const file = storage.bucket(bucketName).file(req.file.filename);
+//         await file.save(req.file.path);
+
+//         const artikelUrl = `https://storage.googleapis.com/${bucketName}/${file.name}`;
+//         // const requestName = req.file.originalname.replace(/\.[^/.]+$/, "");
+//         // const artikelName = requestName.charAt(0).toUpperCase() + requestName.slice(1);
+//         const { title, content } = req.body;
+//         const artikel = new Artikel({
+//             title,
+//             content,
+//             imgUrl: artikelUrl,
+//         });
+
+//         const artikelSave = await artikel.save();
+//         response = new Response.Success(false, null, artikelSave);
+//         res.status(httpStatus.OK).json(response);
+
+//         blobStream.end(req.file.buffer);
+//     } catch (error) {
+//     response = new Response.Error(true, error.message);
+//     res.status(httpStatus.BAD_REQUEST).json(response);
+//   }
+// };
+
+// module.exports = { upload: upload.single('image'), postArtikel };
 
 // const getUploads = async (req, res) => {
 //   let response = null;
@@ -118,4 +221,4 @@ const postArtikel = async (req, res) => {
 //   }
 // }
 
- module.exports = { postArtikel };
+
