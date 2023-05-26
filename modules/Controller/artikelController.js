@@ -36,7 +36,7 @@ const postArtikel = async (req, res) => {
   
 
   try {
-    const blob = bucketName.file(file.originalname);
+    const blob = bucketName.file("images/" + file.originalname);
 
     // Create a writable stream to upload the file contents
     const blobStream = blob.createWriteStream();
