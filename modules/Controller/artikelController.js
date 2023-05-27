@@ -52,9 +52,9 @@ const postArtikel = async (req, res) => {
     const artikelUrl = `https://storage.googleapis.com/${bucketName.name}/${blob.name}`;
     const { title, content } = req.body;
     const image = new Artikel({ title, content, imgUrl: artikelUrl });
-    await image.save();
-    return res.status(200).json({ url: artikelUrl });
-    
+    const result = await image.save();
+    response = new Response.Success(false, null, result);
+    res.status(httpStatus.OK).json(response);
   } catch (err) {
     console.error(err);
     return res.status(500).send('Internal server error.');

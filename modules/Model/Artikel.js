@@ -14,8 +14,8 @@ const artikelSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    createdAt: {
-        type: String,
+    createDate: {
+        type: Date,
         default: Date.now,
     },
 });
