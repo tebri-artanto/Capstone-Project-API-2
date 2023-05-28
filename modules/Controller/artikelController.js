@@ -1,5 +1,4 @@
 const { Storage } = require("@google-cloud/storage");
-const processFile = require("../middleware/uploadImg");
 const { format } = require("util");
 const Artikel = require('../Model/Artikel');
 const httpStatus = require("http-status");
