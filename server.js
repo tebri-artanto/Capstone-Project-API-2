@@ -12,7 +12,7 @@ const artikelRoutes = require('./modules/Routes/ArtikelRoutes');
 const app = express();
 
 // Connect to MongoDB (replace "mongodb://localhost/mydatabase" with your MongoDB connection string)
-mongoose.connect('mongodb+srv://c306dsx0714:c306dsx0714@clustersampah.jjk8a.mongodb.net/', {
+mongoose.connect('mongodb+srv://c306dsx0714:c306dsx0714@cluster-sampah.agwgwtw.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
