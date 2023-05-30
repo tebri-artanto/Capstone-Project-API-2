@@ -4,13 +4,13 @@ const pengepulSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        unique:true,
+        unique: true,
     },
     createDate: {
         type: Date,
         default: Date.now,
     },
-    contact:{
+    contact: {
         type: Number,
         required: true,
     },
@@ -18,10 +18,16 @@ const pengepulSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    description:{
+    description: {
         type: String,
-        required: true
-    }
+        required: true,
+    },
+    lat: {
+        type: Number,
+    },
+    lon: {
+        type: Number,
+    },
 });
 
 const Pengepul = mongoose.model("Pengepul", pengepulSchema);
