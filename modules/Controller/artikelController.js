@@ -52,7 +52,7 @@ const postArtikel = async (req, res) => {
     const { title, content } = req.body;
     const image = new Artikel({ title, content, imgUrl: artikelUrl });
     const result = await image.save();
-    response = new Response.Success(false, null, result);
+    response = new Response.Success(false, "Success Adding Artikel", result);
     res.status(httpStatus.OK).json(response);
   } catch (err) {
     console.error(err);
@@ -60,9 +60,23 @@ const postArtikel = async (req, res) => {
   }
 };
 
+
+
+const getArtikel = async (req, res) => {
+  let response = null;
+  try {
+    const artikel = await Artikel.find();
+
+    response = new Response.Success(false, "Artikel fetched successfully", artikel);
+    res.status(httpStatus.OK).json(response); 
+  } catch (error) {
+    response = new Response.Error(true, error.message);
+    res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+};
+
 module.exports = {
   upload: upload.single('image'),
   postArtikel,
+  getArtikel,
 };
-
-
