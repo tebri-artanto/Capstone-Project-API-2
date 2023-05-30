@@ -17,7 +17,7 @@ const pengepulSignUp = async (req, res) => {
     const newPengepul = new Pengepul(request);
     const result = await newPengepul.save();
 
-    response = new Response.Success(false, null, result);
+    response = new Response.Success(false, "Success Adding Pengepul", result);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);
@@ -42,12 +42,7 @@ const getPengepul = async (req, res) => {
 
     const pengepul = await Pengepul.find(query);
 
-    if (pengepul.length === 0) {
-      response = new Response.Error(true, "No results found");
-    } else {
-      response = new Response.Success(false, "data ditemukan", pengepul);
-    }
-
+    response = new Response.Success(false, null, pengepul);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);
