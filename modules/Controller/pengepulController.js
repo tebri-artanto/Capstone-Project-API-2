@@ -44,6 +44,8 @@ const getPengepul = async (req, res) => {
 
     if (pengepul.length === 0) {
       response = new Response.Error(true, "No results found");
+      res.status(httpStatus.BAD_REQUEST).json(response);
+      return;
     } else {
       response = new Response.Success(false, "result found", pengepul);
     }
