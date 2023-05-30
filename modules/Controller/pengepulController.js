@@ -3,7 +3,6 @@ const Response = require("../Model/Response");
 const Pengepul = require("../Model/Pengepul");
 const pengepulValidator = require("../Utils/PengepulValidator");
 
-
 const pengepulSignUp = async (req, res) => {
   let response = null;
   try {
@@ -26,29 +25,34 @@ const pengepulSignUp = async (req, res) => {
   }
 };
 
-const getPengepul = async (req,res) =>{
+const getPengepul = async (req, res) => {
   let response = null;
-  try{
-    const {username, location } = req.query;
+  try {
+    const { username, location } = req.query;
 
     let query = {};
 
-    if(username) {
-      query.username = username
+    if (username) {
+      query.username = { $regex: username, $options: "i" };
     }
 
-    if(location){
-      query.location = location
+    if (location) {
+      query.location = { $regex: location, $options: "i"};
     }
 
     const pengepul = await Pengepul.find(query);
 
-    response = new Response.Success(false, null, pengepul);
+    if (pengepul.length === 0) {
+      response = new Response.Error(true, "No results found");
+    } else {
+      response = new Response.Success(false, "data ditemukan", pengepul);
+    }
+
     res.status(httpStatus.OK).json(response);
-  }catch(error){
+  } catch (error) {
     response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
-  };
+  }
 };
 
-module.exports = {pengepulSignUp, getPengepul}
+module.exports = { pengepulSignUp, getPengepul };
