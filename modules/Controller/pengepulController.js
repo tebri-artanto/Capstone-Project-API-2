@@ -28,16 +28,15 @@ const pengepulSignUp = async (req, res) => {
 const getPengepul = async (req, res) => {
   let response = null;
   try {
-    const { username, location } = req.query;
+    const { input } = req.query;
 
     let query = {};
 
-    if (username) {
-      query.username = { $regex: username, $options: "i" };
-    }
-
-    if (location) {
-      query.location = { $regex: location, $options: "i" };
+    if (input) {
+      query.$or = [
+        { username: { $regex: input, $options: "i" } },
+        { location: { $regex: input, $options: "i" } }
+      ];
     }
 
     const pengepul = await Pengepul.find(query);
@@ -47,7 +46,7 @@ const getPengepul = async (req, res) => {
       res.status(httpStatus.BAD_REQUEST).json(response);
       return;
     } else {
-      response = new Response.Success(false, "result found", pengepul);
+      response = new Response.Success(false, "Results found", pengepul);
     }
 
     res.status(httpStatus.OK).json(response);
@@ -56,5 +55,6 @@ const getPengepul = async (req, res) => {
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
+
 
 module.exports = { pengepulSignUp, getPengepul };
