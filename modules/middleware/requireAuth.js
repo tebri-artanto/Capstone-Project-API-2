@@ -9,7 +9,8 @@ const requireAuth = (req, res, next) =>{
     const response = new Response.Error(true, "Unauthorized");
 
     if(!token){
-        res.status(httpStatus.UNAUTHORIZED).json(response)
+        res.status(httpStatus.UNAUTHORIZED).json(response);
+        return;
     }
 
     const myToken = clearToken(token);
