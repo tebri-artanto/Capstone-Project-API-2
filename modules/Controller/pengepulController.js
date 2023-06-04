@@ -10,9 +10,15 @@ const pengepulSignUp = async (req, res) => {
 
     const pengepul = await Pengepul.findOne({ username: request.username });
     if (pengepul) {
-      response = new Response.Error(true, "Name already exists");
-      return res.status(httpStatus.BAD_REQUEST).json(response);
+      response = new Response.Error(false, "Anda Sudah Terdaftar");
+      return res.status(httpStatus.OK).json(response);
     }
+
+    // Mendapatkan username dari user yang sudah terotentikasi
+    const username = req.user.username;
+
+    // Menambahkan nilai username ke objek request pengepul
+    request.username = username;
 
     const newPengepul = new Pengepul(request);
     const result = await newPengepul.save();
@@ -24,6 +30,7 @@ const pengepulSignUp = async (req, res) => {
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
+
 
 const getPengepul = async (req, res) => {
   let response = null;
