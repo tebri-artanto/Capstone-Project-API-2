@@ -7,6 +7,7 @@ const Response = require("../Model/Response");
 const path = require('path');
 const maxSize = 10 * 1024 * 1024;
 const pathKey = path.resolve('/serviceaccountkey.json')
+const artikelValidator = require("../Utils/ArtikelValidator");
 
 const storage = new Storage({
   projectId: 'capstone-project-387217',
@@ -49,8 +50,11 @@ const postArtikel = async (req, res) => {
       blobStream.on('error', reject);
     });
     const artikelUrl = `https://storage.googleapis.com/${bucketName.name}/${blob.name}`;
-    const { title, content } = req.body;
-    const image = new Artikel({ title, content, imgUrl: artikelUrl });
+    const request = await artikelValidator.validateAsync(req.body);
+    const username = req.user.username;
+    request.username = username;
+    request.imgUrl= artikelUrl;
+    const image = new Artikel(request);
     const result = await image.save();
     response = new Response.Success(false, "Success Adding Artikel", result);
     res.status(httpStatus.OK).json(response);
@@ -65,10 +69,30 @@ const postArtikel = async (req, res) => {
 const getArtikel = async (req, res) => {
   let response = null;
   try {
-    const artikel = await Artikel.find();
+    const { input } = req.query;
 
-    response = new Response.Success(false, "Artikel fetched successfully", artikel);
-    res.status(httpStatus.OK).json(response); 
+    let query = {};
+
+    if (input) {
+      query.$or = [
+        { username: { $regex: input, $options: "i" } },
+        { title: { $regex: input, $options: "i" } },
+        { jenisSampah: { $regex: input, $options: "i" } },
+        { content: { $regex: input, $options: "i" } }
+      ];
+    }
+
+    const artikel = await Artikel.find(query);
+
+    if (artikel.length === 0) {
+      response = new Response.Error(true, "No results found");
+      res.status(httpStatus.BAD_REQUEST).json(response);
+      return;
+    }else{
+      response = new Response.Success(false, "Artikel fetched successfully", artikel);
+      res.status(httpStatus.OK).json(response);
+    }
+     
   } catch (error) {
     response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
