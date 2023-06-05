@@ -63,5 +63,26 @@ const getPengepul = async (req, res) => {
   }
 };
 
+deletePengepul = async (req,res) =>{
+  try{
+    const { id } = req.params;
+    const { username } = req.user;
 
-module.exports = { pengepulSignUp, getPengepul };
+    const pengepul = await Pengepul.findOne({ _id : id, username});
+
+    if(!pengepul){
+      const response = new Response.Error(true, "Dilarang Menghapus");
+      return res.status(httpStatus.BAD_REQUEST).json(response)
+    }
+
+    await Pengepul.findByIdAndDelete(id);
+
+    const response = new Response.Success(false, "Pengepul Deleted success", pengepul);
+    res.status(httpStatus.OK).json(response)
+  }catch (error){
+    const response = new Response.Error(true, error.message);
+    return res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+}
+
+module.exports = { pengepulSignUp, getPengepul, deletePengepul };
