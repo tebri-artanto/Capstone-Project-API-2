@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const pengepulValidator = Joi.object({
-    contact: Joi.number().required(),
+    contact: Joi.string().required(),
     location: Joi.string().required(),
     description: Joi.string().required(),
 });
