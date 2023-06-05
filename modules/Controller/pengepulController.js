@@ -23,7 +23,7 @@ const pengepulSignUp = async (req, res) => {
     const newPengepul = new Pengepul(request);
     const result = await newPengepul.save();
 
-    response = new Response.Success(false, null, result);
+    response = new Response.Success(false, "Berhasil Mendaftar", result);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);
@@ -63,7 +63,7 @@ const getPengepul = async (req, res) => {
   }
 };
 
-deletePengepul = async (req,res) =>{
+const deletePengepul = async (req,res) =>{
   try{
     const { id } = req.params;
     const { username } = req.user;
@@ -71,7 +71,7 @@ deletePengepul = async (req,res) =>{
     const pengepul = await Pengepul.findOne({ _id : id, username});
 
     if(!pengepul){
-      const response = new Response.Error(true, "Dilarang Menghapus");
+      const response = new Response.Error(true, "Tidak memiliki akses menghapus");
       return res.status(httpStatus.BAD_REQUEST).json(response)
     }
 
