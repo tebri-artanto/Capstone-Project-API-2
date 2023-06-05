@@ -24,6 +24,7 @@ const requireAuth = async (req, res, next) => {
       return;
     }
 
+    req.userId = userId;
     req.user = user;
     next();
   } catch (error) {
