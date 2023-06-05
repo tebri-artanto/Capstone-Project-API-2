@@ -71,7 +71,7 @@ deletePengepul = async (req,res) =>{
     const pengepul = await Pengepul.findOne({ _id : id, username});
 
     if(!pengepul){
-      const response = new Response.Error(true, "Dilarang Menghapus");
+      const response = new Response.Error(true, "You don't have access to delete this Pengepul");
       return res.status(httpStatus.BAD_REQUEST).json(response)
     }
 

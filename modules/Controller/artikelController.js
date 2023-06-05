@@ -8,6 +8,8 @@ const path = require('path');
 const maxSize = 10 * 1024 * 1024;
 const pathKey = path.resolve('/serviceaccountkey.json')
 const artikelValidator = require("../Utils/ArtikelValidator");
+const User = require("../Model/User")
+
 
 const storage = new Storage({
   projectId: 'capstone-project-387217',
@@ -99,8 +101,33 @@ const getArtikel = async (req, res) => {
   }
 };
 
+const deleteArtikel = async (req, res) => {
+  let response = null;
+  const notFoundId = "Article ID not found!"; 
+  try {
+    const { id } = req.params;
+    const { username } = req.user;
+    const artikel = await Artikel.findOne({ _id : id, username });
+
+    if (!artikel) {
+      const response = new Response.Error(true, "You don't have access to delete this Artikel");
+      return res.status(httpStatus.BAD_REQUEST).json(response)
+    }
+
+    // Delete the item
+    await Artikel.findByIdAndDelete(id);
+    const response = new Response.Success(false, "Artikel Deleted success", artikel);
+    res.status(httpStatus.OK).json(response)
+  } catch (error) {
+    response = new Response.Error(true, error.message);
+    res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+};
+
+
 module.exports = {
   upload: upload.single('image'),
   postArtikel,
   getArtikel,
+  deleteArtikel
 };
