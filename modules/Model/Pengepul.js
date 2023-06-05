@@ -11,7 +11,7 @@ const pengepulSchema = new mongoose.Schema({
     default: Date.now,
   },
   contact: {
-    type: Number,
+    type: String,
     required: true,
   },
   location: {
