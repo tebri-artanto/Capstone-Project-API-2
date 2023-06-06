@@ -1,5 +1,4 @@
 const { Storage } = require("@google-cloud/storage");
-const processFile = require("../middleware/uploadImg");
 const { format } = require("util");
 const Artikel = require('../Model/Artikel');
 const httpStatus = require("http-status");
@@ -8,6 +7,9 @@ const Response = require("../Model/Response");
 const path = require('path');
 const maxSize = 10 * 1024 * 1024;
 const pathKey = path.resolve('/serviceaccountkey.json')
+const artikelValidator = require("../Utils/ArtikelValidator");
+const User = require("../Model/User")
+
 
 const storage = new Storage({
   projectId: 'capstone-project-387217',
@@ -22,7 +24,9 @@ const upload = multer({
 
 const postArtikel = async (req, res) => {
    const bucketName = storage.bucket('storing-image-artikel');
+   try {
    const file = req.file;
+   const request = await artikelValidator.validateAsync(req.body);
     if (!req.file) {
       const response = new Response.Error(400, "Please upload a image!" );
       return res.status(httpStatus.BAD_REQUEST).json(response);
@@ -34,9 +38,7 @@ const postArtikel = async (req, res) => {
     return res.status(httpStatus.BAD_REQUEST).json(response);
   }
   
-
-  try {
-    const blob = bucketName.file(file.originalname);
+    const blob = bucketName.file("images/" + file.originalname);
 
     // Create a writable stream to upload the file contents
     const blobStream = blob.createWriteStream();
@@ -50,20 +52,108 @@ const postArtikel = async (req, res) => {
       blobStream.on('error', reject);
     });
     const artikelUrl = `https://storage.googleapis.com/${bucketName.name}/${blob.name}`;
-    const { title, content } = req.body;
-    const image = new Artikel({ title, content, imgUrl: artikelUrl });
-    await image.save();
-    return res.status(200).json({ url: artikelUrl });
     
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send('Internal server error.');
+    const username = req.user.username;
+    request.username = username;
+    request.imgUrl= artikelUrl;
+    const image = new Artikel(request);
+    const result = await image.save();
+    response = new Response.Success(false, "Success Adding Artikel", result);
+    res.status(httpStatus.OK).json(response);
+  } catch (error) {
+    response = new Response.Error(true, error.message);
+    res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
+
+
+
+const getArtikel = async (req, res) => {
+  let response = null;
+  try {
+    const { input } = req.query;
+
+    let query = {};
+
+    if (input) {
+      query.$or = [
+        { username: { $regex: input, $options: "i" } },
+        { title: { $regex: input, $options: "i" } },
+        { jenisSampah: { $regex: input, $options: "i" } },
+        { content: { $regex: input, $options: "i" } }
+      ];
+    }
+
+    const artikel = await Artikel.find(query);
+
+    if (artikel.length === 0) {
+      response = new Response.Error(true, "No results found");
+      res.status(httpStatus.BAD_REQUEST).json(response);
+      return;
+    }else{
+      response = new Response.Success(false, "Artikel fetched successfully", artikel);
+      res.status(httpStatus.OK).json(response);
+    }
+     
+  } catch (error) {
+    response = new Response.Error(true, error.message);
+    res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+};
+
+const deleteArtikel = async (req, res) => {
+  let response = null;
+  const notFoundId = "Article ID not found!"; 
+  try {
+    const { id } = req.params;
+    const { username } = req.user;
+    const artikel = await Artikel.findOne({ _id : id, username });
+
+    if (!artikel) {
+      const response = new Response.Error(true, "You don't have access to delete this Artikel");
+      return res.status(httpStatus.BAD_REQUEST).json(response)
+    }
+
+    // Delete the item
+    await Artikel.findByIdAndDelete(id);
+    const response = new Response.Success(false, "Artikel Deleted success", artikel);
+    res.status(httpStatus.OK).json(response)
+  } catch (error) {
+    response = new Response.Error(true, error.message);
+    res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+};
+
+const updateArtikel = async (req, res) => {
+  let response = null;  
+  try {
+    const { id } = req.params;
+    const { username } = req.user;
+    const artikel = await Artikel.findOne({ _id : id, username });
+
+
+
+    if (!artikel) {
+      const response = new Response.Error(true, "You don't have access to update this Artikel");
+      return res.status(httpStatus.BAD_REQUEST).json(response)
+    }
+
+    // Delete the item
+    await Artikel.findByIdAndUpdate(id, req.body); 
+    await artikelValidator.validateAsync(req.body);
+    const response = new Response.Success(false, "Artikel Update success", artikel);
+    res.status(httpStatus.OK).json(response)
+  } catch (error) {
+    response = new Response.Error(true, error.message);
+    res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+};
+
 
 module.exports = {
   upload: upload.single('image'),
   postArtikel,
+  getArtikel,
+  deleteArtikel,
+  updateArtikel
 };
-
-

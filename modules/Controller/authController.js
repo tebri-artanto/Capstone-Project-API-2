@@ -24,7 +24,7 @@ const signUp = async (req, res) => {
     const user = new User(request);
 
     const result = await user.save();
-    response = new Response.Success(false, null, result);
+    response = new Response.Success(false, "Signup Success", result);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);
@@ -57,7 +57,7 @@ const logIn = async (req, res) => {
 
     const createJwtToken = jwt.sign({ id: user._id }, process.env.KEY);
     const data = { token: createJwtToken };
-    response = new Response.Success(false, null, data);
+    response = new Response.Success(false, "Login Success", data);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);

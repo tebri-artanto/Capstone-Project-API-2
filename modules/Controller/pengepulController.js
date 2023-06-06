@@ -3,7 +3,6 @@ const Response = require("../Model/Response");
 const Pengepul = require("../Model/Pengepul");
 const pengepulValidator = require("../Utils/PengepulValidator");
 
-
 const pengepulSignUp = async (req, res) => {
   let response = null;
   try {
@@ -11,14 +10,20 @@ const pengepulSignUp = async (req, res) => {
 
     const pengepul = await Pengepul.findOne({ username: request.username });
     if (pengepul) {
-      response = new Response.Error(true, "Name already exists");
-      return res.status(httpStatus.BAD_REQUEST).json(response);
+      response = new Response.Error(false, "Anda Sudah Terdaftar");
+      return res.status(httpStatus.OK).json(response);
     }
+
+    // Mendapatkan username dari user yang sudah terotentikasi
+    const username = req.user.username;
+
+    // Menambahkan nilai username ke objek request pengepul
+    request.username = username;
 
     const newPengepul = new Pengepul(request);
     const result = await newPengepul.save();
 
-    response = new Response.Success(false, null, result);
+    response = new Response.Success(false, "Berhasil Mendaftar", result);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);
@@ -26,29 +31,58 @@ const pengepulSignUp = async (req, res) => {
   }
 };
 
-const getPengepul = async (req,res) =>{
+
+const getPengepul = async (req, res) => {
   let response = null;
-  try{
-    const {username, location } = req.query;
+  try {
+    const { input } = req.query;
 
     let query = {};
 
-    if(username) {
-      query.username = username
-    }
-
-    if(location){
-      query.location = location
+    if (input) {
+      query.$or = [
+        { username: { $regex: input, $options: "i" } },
+        { location: { $regex: input, $options: "i" } }
+      ];
     }
 
     const pengepul = await Pengepul.find(query);
 
-    response = new Response.Success(false, null, pengepul);
+    if (pengepul.length === 0) {
+      response = new Response.Error(true, "No results found");
+      res.status(httpStatus.BAD_REQUEST).json(response);
+      return;
+    } else {
+      response = new Response.Success(false, "Results found", pengepul);
+    }
+
     res.status(httpStatus.OK).json(response);
-  }catch(error){
+  } catch (error) {
     response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
-  };
+  }
 };
 
-module.exports = {pengepulSignUp, getPengepul}
+const deletePengepul = async (req,res) =>{
+  try{
+    const { id } = req.params;
+    const { username } = req.user;
+
+    const pengepul = await Pengepul.findOne({ _id : id, username});
+
+    if(!pengepul){
+      const response = new Response.Error(true, "You don't have access to delete this Pengepul");
+      return res.status(httpStatus.BAD_REQUEST).json(response)
+    }
+
+    await Pengepul.findByIdAndDelete(id);
+
+    const response = new Response.Success(false, "Pengepul Deleted success", pengepul);
+    res.status(httpStatus.OK).json(response)
+  }catch (error){
+    const response = new Response.Error(true, error.message);
+    return res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+}
+
+module.exports = { pengepulSignUp, getPengepul, deletePengepul };
