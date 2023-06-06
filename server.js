@@ -6,8 +6,9 @@ const cors = require('cors');
 
 const userRoutes = require('./modules/Routes/userRoutes');
 const pengepulRoutes = require('./modules/Routes/pengepulRoutes');
-const artikelRoutes = require('./modules/Routes/ArtikelRoutes');
-
+const artikelRoutes = require('./modules/Routes/artikelRoutes');
+const penangananRoutes = require('./modules/Routes/penangananRoutes');
+const predictRoutes = require("./modules/Routes/predictRoutes");
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use(bodyParser.json());
 app.use('/', userRoutes);
 app.use('/pengepul', pengepulRoutes);
 app.use('/artikel', artikelRoutes);
+app.use('/penanganan', penangananRoutes);
+app.use('/predict', predictRoutes);
 
 // Start the server
 app.get("/", (req, res) => {
