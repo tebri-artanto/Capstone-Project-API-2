@@ -20,6 +20,14 @@ const pengepulSignUp = async (req, res) => {
     // Menambahkan nilai username ke objek request pengepul
     request.username = username;
 
+    // Jika nilai lot dan lan tidak ada pada request, set nilai menjadi null
+    if (!request.lot) {
+      request.lot = null;
+    }
+    if (!request.lan) {
+      request.lan = null;
+    }
+
     const newPengepul = new Pengepul(request);
     const result = await newPengepul.save();
 
@@ -67,7 +75,6 @@ const deletePengepul = async (req,res) =>{
   try{
     const { id } = req.params;
     const { username } = req.user;
-
     const pengepul = await Pengepul.findOne({ _id : id, username});
 
     if(!pengepul){
@@ -85,4 +92,29 @@ const deletePengepul = async (req,res) =>{
   }
 }
 
-module.exports = { pengepulSignUp, getPengepul, deletePengepul };
+const updatePengepul = async (req, res) => {
+  let response = null;  
+  try {
+    const { id } = req.params;
+    const { username } = req.user;
+    const pengepul = await Pengepul.findOne({ _id: id, username });
+
+    if (!pengepul) {
+      response = new Response.Error(true, "You don't have access to update this Artikel");
+      return res.status(httpStatus.BAD_REQUEST).json(response);
+    }
+
+    await pengepulValidator.validateAsync(req.body); // Assuming `pengepulValidator` is the schema validator for the `Pengepul` model
+
+    await Pengepul.findByIdAndUpdate(id, req.body); 
+
+    response = new Response.Success(false, "Pengepul Update success", pengepul);
+    res.status(httpStatus.OK).json(response);
+  } catch (error) {
+    response = new Response.Error(true, error.message);
+    res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+};
+
+
+module.exports = { pengepulSignUp, getPengepul, deletePengepul, updatePengepul };
