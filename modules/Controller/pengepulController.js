@@ -61,6 +61,7 @@ const getPengepul = async (req, res) => {
       res.status(httpStatus.BAD_REQUEST).json(response);
       return;
     } else {
+      pengepul.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
       response = new Response.Success(false, "Results found", pengepul);
     }
 
