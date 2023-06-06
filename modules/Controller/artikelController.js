@@ -24,7 +24,9 @@ const upload = multer({
 
 const postArtikel = async (req, res) => {
    const bucketName = storage.bucket('storing-image-artikel');
+   try {
    const file = req.file;
+   const request = await artikelValidator.validateAsync(req.body);
     if (!req.file) {
       const response = new Response.Error(400, "Please upload a image!" );
       return res.status(httpStatus.BAD_REQUEST).json(response);
@@ -36,8 +38,6 @@ const postArtikel = async (req, res) => {
     return res.status(httpStatus.BAD_REQUEST).json(response);
   }
   
-
-  try {
     const blob = bucketName.file("images/" + file.originalname);
 
     // Create a writable stream to upload the file contents
@@ -52,7 +52,7 @@ const postArtikel = async (req, res) => {
       blobStream.on('error', reject);
     });
     const artikelUrl = `https://storage.googleapis.com/${bucketName.name}/${blob.name}`;
-    const request = await artikelValidator.validateAsync(req.body);
+    
     const username = req.user.username;
     request.username = username;
     request.imgUrl= artikelUrl;
@@ -60,9 +60,9 @@ const postArtikel = async (req, res) => {
     const result = await image.save();
     response = new Response.Success(false, "Success Adding Artikel", result);
     res.status(httpStatus.OK).json(response);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send('Internal server error.');
+  } catch (error) {
+    response = new Response.Error(true, error.message);
+    res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
 
