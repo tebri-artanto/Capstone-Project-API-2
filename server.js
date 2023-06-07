@@ -16,7 +16,14 @@ mongoose.connect('mongodb+srv://c306dsx0714:c306dsx0714@cluster-sampah.agwgwtw.m
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-app.use(express.static('public'));
+function ignoreFavicon(req, res, next) {
+  if (req.originalUrl.includes('favicon.ico')) {
+    res.status(204).end()
+  }
+  next();
+}
+
+app.use(ignoreFavicon);
 
 dotenv.config();
 // Enable CORS
