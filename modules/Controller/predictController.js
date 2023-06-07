@@ -17,20 +17,20 @@ const upload = multer({
 
 
 const postPredictImage = async (req, res) => {
-   const bucketName = storage.bucket('storing-image-artikel');
-   try {
-   const file = req.file;
+  const bucketName = storage.bucket('storing-image-artikel');
+  try {
+    const file = req.file;
     if (!req.file) {
-      const response = new Response.Error(400, "Please upload a image!" );
+      const response = new Response.Error(400, "Please upload a image!");
       return res.status(httpStatus.BAD_REQUEST).json(response);
     }
 
-  const ext = req.file.originalname.split('.').pop();
-  if (ext !== "png" && ext !== "jpg" && ext !== "jpeg" && ext !== "PNG" && ext !== "JPG" && ext !== "JPEG") {
-    const response = new Response.Error(400, "Only images are allowed" );
-    return res.status(httpStatus.BAD_REQUEST).json(response);
-  }
-  
+    const ext = req.file.originalname.split('.').pop();
+    if (ext !== "png" && ext !== "jpg" && ext !== "jpeg" && ext !== "PNG" && ext !== "JPG" && ext !== "JPEG") {
+      const response = new Response.Error(400, "Only images are allowed");
+      return res.status(httpStatus.BAD_REQUEST).json(response);
+    }
+
     const blob = bucketName.file("predictImages/" + file.originalname);
     const blobStream = blob.createWriteStream();
     blobStream.end(file.buffer);
@@ -39,19 +39,19 @@ const postPredictImage = async (req, res) => {
       blobStream.on('finish', resolve);
       blobStream.on('error', reject);
     });
+    
     const imageUrl = `https://storage.googleapis.com/${bucketName.name}/${blob.name}`;
 
     const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
     const imageBuffer = Buffer.from(imageResponse.data, 'binary');
 
-    // Create a new FormData object
     const formData = new FormData();
     formData.append('file', imageBuffer, 'image.jpg');
     const cloudRunResponse = await axios.post('https://ml-waste-image-ctjdvmzs5q-et.a.run.app/predict/', formData, {
       headers: formData.getHeaders(),
     });
     const predictionResult = cloudRunResponse.data;
-    response = new Response.Success(false, "Success" , predictionResult);
+    response = new Response.Success(false, "Success", predictionResult);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);

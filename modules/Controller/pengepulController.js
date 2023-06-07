@@ -14,13 +14,9 @@ const pengepulSignUp = async (req, res) => {
       return res.status(httpStatus.OK).json(response);
     }
 
-    // Mendapatkan username dari user yang sudah terotentikasi
     const username = req.user.username;
-
-    // Menambahkan nilai username ke objek request pengepul
     request.username = username;
 
-    // Jika nilai lot dan lan tidak ada pada request, set nilai menjadi null
     if (!request.lot) {
       request.lot = null;
     }

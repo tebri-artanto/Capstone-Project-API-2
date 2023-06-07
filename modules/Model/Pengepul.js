@@ -32,23 +32,20 @@ const pengepulSchema = new mongoose.Schema({
   },
 });
 
-pengepulSchema.pre('save', async function(next) {
-    const pengepul = this;
+pengepulSchema.pre('save', async function (next) {
+  const pengepul = this;
+
+  const user = await User.findOne({ username: pengepul.username });
   
-    // Cari dokumen terkait dalam koleksi "User"
-    const user = await User.findOne({ username: pengepul.username });
-  
-    // Jika dokumen user ditemukan, update nilai createDate
-    if (user) {
-        pengepul.username = user.username;
-    } else {
-        // Jika dokumen user tidak ditemukan, lempar error atau berikan penanganan sesuai kebutuhan
-        throw new Error('User not found');
-    }
-  
-    next();
+  if (user) {
+    pengepul.username = user.username;
+  } else {
+    throw new Error('User not found');
+  }
+
+  next();
 });
-  
+
 
 const Pengepul = mongoose.model('Pengepul', pengepulSchema);
 
