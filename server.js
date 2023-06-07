@@ -6,7 +6,7 @@ const cors = require('cors');
 
 const userRoutes = require('./modules/Routes/userRoutes');
 const pengepulRoutes = require('./modules/Routes/pengepulRoutes');
-const artikelRoutes = require('./modules/Routes/artikelRoutes');
+const artikelRoutes = require('./modules/Routes/ArtikelRoutes');
 const predictRoutes = require("./modules/Routes/predictRoutes");
 
 const app = express();
@@ -16,14 +16,7 @@ mongoose.connect('mongodb+srv://c306dsx0714:c306dsx0714@cluster-sampah.agwgwtw.m
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-function ignoreFavicon(req, res, next) {
-  if (req.originalUrl.includes('favicon.ico')) {
-    res.status(204).end()
-  }
-  next();
-}
 
-app.use(ignoreFavicon);
 
 dotenv.config();
 // Enable CORS

@@ -2,9 +2,7 @@ const { Storage } = require("@google-cloud/storage");
 const httpStatus = require("http-status");
 const multer = require('multer');
 const Response = require("../Model/Response");
-const path = require('path');
 const axios = require('axios');
-const { Readable } = require('stream');
 const FormData = require('form-data');
 
 
