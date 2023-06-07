@@ -20,57 +20,57 @@ const postPenanganan = async (req, res) => {
 };
 
 
-const getPenanganan = async (req, res) => {
-  let response = null;
-  try {
-    const { input } = req.query;
+// const getPenanganan = async (req, res) => {
+//   let response = null;
+//   try {
+//     const { input } = req.query;
 
-    let query = {};
+//     let query = {};
 
-    if (input) {
-      query.$or = [
-        { username: { $regex: input, $options: "i" } },
-        { location: { $regex: input, $options: "i" } }
-      ];
-    }
+//     if (input) {
+//       query.$or = [
+//         { username: { $regex: input, $options: "i" } },
+//         { location: { $regex: input, $options: "i" } }
+//       ];
+//     }
 
-    const penanganan = await Penanganan.find(query);
+//     const penanganan = await Penanganan.find(query);
 
-    if (penanganan.length === 0) {
-      response = new Response.Error(true, "No results found");
-      res.status(httpStatus.BAD_REQUEST).json(response);
-      return;
-    } else {
-      response = new Response.Success(false, "Results found", penanganan);
-    }
+//     if (penanganan.length === 0) {
+//       response = new Response.Error(true, "No results found");
+//       res.status(httpStatus.BAD_REQUEST).json(response);
+//       return;
+//     } else {
+//       response = new Response.Success(false, "Results found", penanganan);
+//     }
 
-    res.status(httpStatus.OK).json(response);
-  } catch (error) {
-    response = new Response.Error(true, error.message);
-    res.status(httpStatus.BAD_REQUEST).json(response);
-  }
-};
+//     res.status(httpStatus.OK).json(response);
+//   } catch (error) {
+//     response = new Response.Error(true, error.message);
+//     res.status(httpStatus.BAD_REQUEST).json(response);
+//   }
+// };
 
-const deletePenanganan = async (req,res) =>{
-  try{
-    const { id } = req.params;
-    const { username } = req.user;
+// const deletePenanganan = async (req,res) =>{
+//   try{
+//     const { id } = req.params;
+//     const { username } = req.user;
 
-    const penanganan = await Penanganan.findOne({ _id : id, username});
+//     const penanganan = await Penanganan.findOne({ _id : id, username});
 
-    if(!penanganan){
-      const response = new Response.Error(true, "You don't have access to delete this Penanganan");
-      return res.status(httpStatus.BAD_REQUEST).json(response)
-    }
+//     if(!penanganan){
+//       const response = new Response.Error(true, "You don't have access to delete this Penanganan");
+//       return res.status(httpStatus.BAD_REQUEST).json(response)
+//     }
 
-    await Penanganan.findByIdAndDelete(id);
+//     await Penanganan.findByIdAndDelete(id);
 
-    const response = new Response.Success(false, "Penanganan Deleted success", penanganan);
-    res.status(httpStatus.OK).json(response)
-  }catch (error){
-    const response = new Response.Error(true, error.message);
-    return res.status(httpStatus.BAD_REQUEST).json(response);
-  }
-}
+//     const response = new Response.Success(false, "Penanganan Deleted success", penanganan);
+//     res.status(httpStatus.OK).json(response)
+//   }catch (error){
+//     const response = new Response.Error(true, error.message);
+//     return res.status(httpStatus.BAD_REQUEST).json(response);
+//   }
+// }
 
-module.exports = { postPenanganan, getPenanganan, deletePenanganan };
+module.exports = { postPenanganan };
