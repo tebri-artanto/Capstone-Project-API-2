@@ -61,10 +61,10 @@ const postPredictImage = async (req, res) => {
     const data = JSON.parse(response.data);
     const test = data['Prediction result'];
     console.log(test);
-    const penanganan = await Penanganan.findOne({
-      name: test,
-    });
-    response = new Response.Success(false, "Success" , penanganan);
+    // const penanganan = await Penanganan.findOne({
+    //   name: test,
+    // });
+    response = new Response.Success(false, "Success" , test);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);
