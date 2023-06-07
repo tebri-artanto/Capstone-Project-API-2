@@ -49,7 +49,6 @@ const postPredictImage = async (req, res) => {
     // Create a new FormData object
     const formData = new FormData();
     formData.append('file', imageBuffer, 'image.jpg');
-    console.log
     const cloudRunResponse = await axios.post('https://ml-waste-image-ctjdvmzs5q-et.a.run.app/predict/', formData, {
       headers: formData.getHeaders(),
     });
