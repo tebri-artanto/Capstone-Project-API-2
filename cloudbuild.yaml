@@ -3,10 +3,6 @@ steps:
   - name: 'gcr.io/cloud-builders/npm'
     args: ['install']
   
-  # Build the application
-  - name: 'gcr.io/cloud-builders/npm'
-    args: ['run', 'build']
-  
   # Deploy to App Engine
   - name: 'gcr.io/cloud-builders/gcloud'
     args: ['app', 'deploy']
