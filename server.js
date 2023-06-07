@@ -31,7 +31,7 @@ app.use('/', userRoutes);
 app.use('/pengepul', pengepulRoutes);
 app.use('/artikel', artikelRoutes);
 app.use('/penanganan', penangananRoutes);
-app.use('/predict', predictRoutes);
+app.use('/predictImage', predictRoutes);
 
 // Start the server
 app.get("/", (req, res) => {

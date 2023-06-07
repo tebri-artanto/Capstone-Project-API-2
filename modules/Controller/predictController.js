@@ -5,6 +5,8 @@ const Response = require("../Model/Response");
 const path = require('path');
 const axios = require('axios');
 const { Readable } = require('stream');
+const FormData = require('form-data');
+const Penanganan = require("../Model/Penanganan")
 
 const storage = new Storage({
   projectId: 'capstone-project-387217',
@@ -40,10 +42,29 @@ const postPredictImage = async (req, res) => {
       blobStream.on('error', reject);
     });
     const imageUrl = `https://storage.googleapis.com/${bucketName.name}/${blob.name}`;
-    const cloudRunResponse = await axios.post('https://ml-waste-image-ctjdvmzs5q-et.a.run.app/predict/', { photo: file });
-    const predictionResult = cloudRunResponse.data.result;
 
-    response = new Response.Success(false, "Success" , predictionResult);
+    const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+    const imageBuffer = Buffer.from(imageResponse.data, 'binary');
+
+    // Create a new FormData object
+    const formData = new FormData();
+    formData.append('file', imageBuffer, 'image.jpg');
+    console.log
+    const cloudRunResponse = await axios.post('https://ml-waste-image-ctjdvmzs5q-et.a.run.app/predict/', formData, {
+      headers: formData.getHeaders(),
+    });
+    const predictionResult = cloudRunResponse.data;
+    const jsonString = JSON.stringify(predictionResult);
+    console.log(jsonString);
+    //res.json({ prediction: jsonString });
+    response = new Response.Success(false, "Success" , jsonString);
+    const data = JSON.parse(response.data);
+    const test = data['Prediction result'];
+    console.log(test);
+    const penanganan = await Penanganan.findOne({
+      name: test,
+    });
+    response = new Response.Success(false, "Success" , penanganan);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);
@@ -51,14 +72,6 @@ const postPredictImage = async (req, res) => {
   }
 };
 
-function streamToBuffer(stream) {
-    return new Promise((resolve, reject) => {
-      const chunks = [];
-      stream.on('data', (chunk) => chunks.push(chunk));
-      stream.on('error', reject);
-      stream.on('end', () => resolve(Buffer.concat(chunks)));
-    });
-  }
 
 module.exports = {
   upload: upload.single('image'),
