@@ -34,7 +34,7 @@ app.use('/predictImage', predictRoutes);
 // Start the server
 app.get("/", (req, res) => {
     console.log("Response success")
-    res.send("Response Success!")
+    res.send("Response Success!!!")
 })
 
 const PORT = process.env.PORT || 8000
