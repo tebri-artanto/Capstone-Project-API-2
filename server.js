@@ -11,13 +11,9 @@ const predictRoutes = require("./modules/Routes/predictRoutes");
 
 const app = express();
 
-mongoose.connect('mongodb+srv://c306dsx0714:c306dsx0714@cluster-sampah.agwgwtw.mongodb.net/', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-
 dotenv.config();
+require("./modules/Database/mongodb");
+
 // Enable CORS
 app.use(cors());
 
