@@ -17,13 +17,6 @@ const pengepulSignUp = async (req, res) => {
     const username = req.user.username;
     request.username = username;
 
-    if (!request.lot) {
-      request.lot = null;
-    }
-    if (!request.lan) {
-      request.lan = null;
-    }
-
     const newPengepul = new Pengepul(request);
     const result = await newPengepul.save();
 
