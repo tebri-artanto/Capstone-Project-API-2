@@ -17,11 +17,11 @@ const pengepulSignUp = async (req, res) => {
     const username = req.user.username;
     request.username = username;
 
-    if (!request.lot) {
-      request.lot = null;
+    if (!request.lat) {
+      request.lat = null;
     }
-    if (!request.lan) {
-      request.lan = null;
+    if (!request.lon) {
+      request.lon = null;
     }
 
     const newPengepul = new Pengepul(request);
