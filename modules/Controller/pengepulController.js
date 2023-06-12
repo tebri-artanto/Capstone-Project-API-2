@@ -8,9 +8,9 @@ const pengepulSignUp = async (req, res) => {
   try {
     const request = await pengepulValidator.validateAsync(req.body);
 
-    const pengepul = await Pengepul.findOne({ username: request.username });
+    const pengepul = await Pengepul.findOne({ username: req.user.username });
     if (pengepul) {
-      response = new Response.Error(false, "Anda Sudah Terdaftar");
+      response = new Response.Error(false, "You have already registered");
       return res.status(httpStatus.OK).json(response);
     }
 
@@ -20,7 +20,7 @@ const pengepulSignUp = async (req, res) => {
     const newPengepul = new Pengepul(request);
     const result = await newPengepul.save();
 
-    response = new Response.Success(false, "Berhasil Mendaftar", result);
+    response = new Response.Success(false, "Successfully registered", result);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);
