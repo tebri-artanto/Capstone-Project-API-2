@@ -11,8 +11,16 @@ const signUp = async (req, res) => {
   try {
     const request = await userValidator.validateAsync(req.body);
 
-    const users = await User.findOne({ email: request.email });
+
+    const users = await User.findOne({ username: request.username });
     if (users) {
+      response = new Response.Error(true, "Username already exist");
+      res.status(httpStatus.BAD_REQUEST).json(response);
+      return;
+    }
+
+    const mail = await User.findOne({ email: request.email });
+    if (mail) {
       response = new Response.Error(true, "Email already exist");
       res.status(httpStatus.BAD_REQUEST).json(response);
       return;
