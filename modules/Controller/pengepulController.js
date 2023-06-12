@@ -61,6 +61,20 @@ const getPengepul = async (req, res) => {
   }
 };
 
+const getPengepulByUsename = async (req, res) => {
+  let response = null;
+  const pengepulParams = req.params.username;
+  try {
+    const pengepul = await Pengepul.find({'username': pengepulParams});
+
+    response = new Response.Success(false, "Results found", pengepul);
+    res.status(httpStatus.OK).json(response); 
+  } catch (error) {
+    response = new Response.Error(true, error.message);
+    res.status(httpStatus.BAD_REQUEST).json(response);
+  }
+};
+
 const deletePengepul = async (req,res) =>{
   try{
     const { id } = req.params;
@@ -107,4 +121,4 @@ const updatePengepul = async (req, res) => {
 };
 
 
-module.exports = { pengepulSignUp, getPengepul, deletePengepul, updatePengepul };
+module.exports = { pengepulSignUp, getPengepul, getPengepulByUsename, deletePengepul, updatePengepul };

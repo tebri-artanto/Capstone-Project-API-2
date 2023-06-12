@@ -6,6 +6,7 @@ const requireAuth = require("../middleware/requireAuth");
 router.get("/", pengepulController.getPengepul);
 router.use(requireAuth);
 router.post("/add", pengepulController.pengepulSignUp);
+router.get("/:username", pengepulController.getPengepulByUsename);
 router.delete("/:id", pengepulController.deletePengepul);
 router.put("/:id", pengepulController.updatePengepul);
 
