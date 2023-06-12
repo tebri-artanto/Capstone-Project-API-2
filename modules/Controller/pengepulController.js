@@ -61,7 +61,7 @@ const getPengepul = async (req, res) => {
   }
 };
 
-const getPengepulByUsename = async (req, res) => {
+const getPengepulByUsername = async (req, res) => {
   let response = null;
   const pengepulParams = req.params.username;
   try {
@@ -121,4 +121,4 @@ const updatePengepul = async (req, res) => {
 };
 
 
-module.exports = { pengepulSignUp, getPengepul, getPengepulByUsename, deletePengepul, updatePengepul };
+module.exports = { pengepulSignUp, getPengepul, getPengepulByUsername, deletePengepul, updatePengepul };
