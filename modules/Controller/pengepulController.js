@@ -10,7 +10,7 @@ const pengepulSignUp = async (req, res) => {
 
     const pengepul = await Pengepul.findOne({ username: req.user.username });
     if (pengepul) {
-      response = new Response.Error(false, "You have already registered");
+      response = new Response.Error(false, "You are already a Collector");
       return res.status(httpStatus.OK).json(response);
     }
 
@@ -20,7 +20,7 @@ const pengepulSignUp = async (req, res) => {
     const newPengepul = new Pengepul(request);
     const result = await newPengepul.save();
 
-    response = new Response.Success(false, "Successfully registered", result);
+    response = new Response.Success(false, "You are now a Collector", result);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
     response = new Response.Error(true, error.message);
