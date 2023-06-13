@@ -7,7 +7,7 @@ for the backend API, we use **express.js** to make the endpoint. We deployed API
 * Method : POST
 * URL : https://capstone-project-387217.et.r.appspot.com/signup
 <pre>
-```
+```javascript
 {
  "username":"String",
  "email":"String",
