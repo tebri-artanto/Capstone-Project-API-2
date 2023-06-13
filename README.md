@@ -34,6 +34,19 @@ for the backend API, we use **express.js** to make the endpoint. We deployed API
 * URL : https://capstone-project-387217.et.r.appspot.com/predictImage
 
 # Pengepul
+## Get Pengepul
+* Method : GET
+* URL : https://capstone-project-387217.et.r.appspot.com/pengepul/
+<pre>
+{
+ "contact":"String",
+ "location":"String",
+ "description":"String",
+ "lat":"Number",
+ "lon":"Number"
+}
+</pre>
+
 ## Sign Up Pengepul
 * Method : POST
 * Header : Bearer Token
@@ -73,5 +86,33 @@ for the backend API, we use **express.js** to make the endpoint. We deployed API
  "description":"String",
  "lat":"Number",
  "lon":"Number"
+}
+</pre>
+
+# Artikel
+## Get Artikel
+* Method : GET
+* URL : https://capstone-project-387217.et.r.appspot.com/artikel/
+<pre>
+{
+ "title":"String"
+ "content":"String",
+ "imgUrl":"String",
+ "jenisSampah":"String",
+ "username":"String"
+}
+</pre>
+
+## Add Artikel
+* Method : POST
+* Header : Bearer Token
+* Body : form-data/multipart
+* URL : https://capstone-project-387217.et.r.appspot.com/artikel/add/
+<pre>
+{
+ "title":"String",
+ "content":"String",
+ "jenisSampah":"String",
+ "imgUrl":"String"
 }
 </pre>
