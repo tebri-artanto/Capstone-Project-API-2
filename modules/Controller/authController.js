@@ -64,7 +64,7 @@ const logIn = async (req, res) => {
     }
 
     const createJwtToken = jwt.sign({ id: user._id }, process.env.KEY);
-    const data = { token: createJwtToken };
+    const data = { token: createJwtToken, username: user.username };
     response = new Response.Success(false, "Login Success", data);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
