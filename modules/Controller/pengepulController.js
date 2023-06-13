@@ -62,31 +62,25 @@ const getPengepul = async (req, res) => {
 };
 
 const getPengepulByUsername = async (req, res) => {
-  let response = null;
-  const pengepulParams = req.params.username;
   try {
-    const pengepul = await Pengepul.find({'username': pengepulParams});
+    const pengepul = await Pengepul.find({'username': req.params.username});
 
-    response = new Response.Success(false, "Results found", pengepul);
+    const response = new Response.Success(false, "Results found", pengepul);
     res.status(httpStatus.OK).json(response); 
   } catch (error) {
-    response = new Response.Error(true, error.message);
+    const response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
 
 const deletePengepul = async (req,res) =>{
   try{
-    const { id } = req.params;
-    const { username } = req.user;
-    const pengepul = await Pengepul.findOne({ _id : id, username});
-
+    const pengepul = await Pengepul.findOne({ username : req.user.username });
     if(!pengepul){
       const response = new Response.Error(true, "You don't have access to delete this Pengepul");
       return res.status(httpStatus.BAD_REQUEST).json(response)
     }
-
-    await Pengepul.findByIdAndDelete(id);
+    await Pengepul.findByIdAndDelete(pengepul.id);
 
     const response = new Response.Success(false, "Pengepul Deleted success", pengepul);
     res.status(httpStatus.OK).json(response)
@@ -99,18 +93,14 @@ const deletePengepul = async (req,res) =>{
 const updatePengepul = async (req, res) => {
   let response = null;  
   try {
-    const { id } = req.params;
-    const { username } = req.user;
-    const pengepul = await Pengepul.findOne({ _id: id, username });
-
+    const pengepul = await Pengepul.findOne({ username : req.user.username });
     if (!pengepul) {
-      response = new Response.Error(true, "You don't have access to update this Artikel");
+      response = new Response.Error(true, "You don't have access to update this Pengepul");
       return res.status(httpStatus.BAD_REQUEST).json(response);
     }
 
-    await pengepulValidator.validateAsync(req.body); // Assuming `pengepulValidator` is the schema validator for the `Pengepul` model
-
-    await Pengepul.findByIdAndUpdate(id, req.body); 
+    await pengepulValidator.validateAsync(req.body);
+    await Pengepul.findByIdAndUpdate(pengepul.id, req.body); 
 
     response = new Response.Success(false, "Pengepul Update success", pengepul);
     res.status(httpStatus.OK).json(response);
