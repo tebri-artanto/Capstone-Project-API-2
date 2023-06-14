@@ -8,7 +8,6 @@ const FormData = require('form-data');
 
 const storage = new Storage({
   projectId: 'capstone-project-387217',
-  keyFilename: './serviceaccountkey.json'
 });
 
 const upload = multer({
