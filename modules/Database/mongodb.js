@@ -10,15 +10,19 @@ async function getSecretValue() {
   });
 
   const connectionString = version.payload.data.toString();
+  return connectionString;
 
-  mongoose.connect(connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-    .then(() => console.log("Database Connected"))
-    .catch((error) => console.log(error.message));
+  
 }
-getSecretValue().catch(console.error);
+
+const connectionString = getSecretValue();
+
+mongoose.connect(connectionString, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log("Database Connected"))
+  .catch((error) => console.log(error.message));
 // async function getSecretValue() {
 //   const client = new SecretManagerServiceClient();
 //   const name = 'projects/377381526885/secrets/database/versions/1';
