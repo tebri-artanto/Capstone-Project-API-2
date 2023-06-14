@@ -9,7 +9,7 @@ async function getSecretValue() {
     name: name,
   });
 
-  const connectionString = version.payload.data.toString();
+  const connectionString = version.payload.data.toString('utf8');
   return connectionString;
 
   
