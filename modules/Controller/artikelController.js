@@ -5,7 +5,6 @@ const multer = require('multer');
 const Response = require("../Model/Response");
 const artikelValidator = require("../Utils/ArtikelValidator");
 
-
 const storage = new Storage({
   projectId: 'capstone-project-387217',
 });
