@@ -4,7 +4,7 @@ const { SecretManagerServiceClient } = require("@google-cloud/secret-manager");
 const client = new SecretManagerServiceClient();
 const getSecretValue = async () => {
   const [version] = await client.accessSecretVersion({
-    name: "projects/631861842917/secrets/database/versions/1",
+    name: "projects/377381526885/secrets/database/versions/1",
   });
   const connectionString = version.payload.data.toString("utf8");
   return connectionString;
