@@ -1,28 +1,26 @@
 const mongoose = require("mongoose");
-const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
+const { SecretManagerServiceClient } = require("@google-cloud/secret-manager");
 
 const client = new SecretManagerServiceClient();
 const getSecretValue = async () => {
-
   const [version] = await client.accessSecretVersion({
-    name: 'projects/631861842917/secrets/database/versions/1',
+    name: "projects/631861842917/secrets/database/versions/1",
   });
-  const connectionString = version.payload.data.toString('utf8');
+  const connectionString = version.payload.data.toString("utf8");
   return connectionString;
-}
+};
 
 const connectDb = async () => {
-  try {
-    const connectionString = await getSecretValue();
-    await mongoose.connect(connectionString, {
+  const connectionString = await getSecretValue();
+
+  await mongoose
+    .connect(connectionString, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
-    console.log('Database Connected');
-  } catch (error) {
-    console.log(error.message);
-  }
-}
+    .then(() => console.log("Database Connected"))
+    .catch((error) => console.log(error.message));
+};
 
 connectDb();
 
@@ -46,12 +44,10 @@ connectDb();
 
 //   console.log('Secret value:', payload);
 // }
-  
+
 // mongoose.connect("string", {
 //     useNewUrlParser: true,
 //     useUnifiedTopology: true,
 //   })
 //   .then(() => console.log("Database Connected"))
 //   .catch((error) => console.log(error.message));
-
-  
