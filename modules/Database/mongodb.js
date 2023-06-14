@@ -3,7 +3,7 @@ const { SecretManagerServiceClient } = require('@google-cloud/secret-manager');
 
 async function getSecretValue() {
   const client = new SecretManagerServiceClient();
-  const name = 'projects/377381526885/secrets/database/versions/1';
+  const name = 'projects/631861842917/secrets/database/versions/1';
 
   const [version] = await client.accessSecretVersion({
     name: name,
