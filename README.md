@@ -110,9 +110,15 @@ for the backend API, we use **express.js** to make the endpoint. We deployed API
 * URL : https://capstone-project-387217.et.r.appspot.com/artikel/add/
 <pre>
 {
- "title":"String",
+  "error": "boolean",
+  "message": "string",
+  "data": [
+    {
+       "title":"String",
  "content":"String",
  "jenisSampah":"String",
  "imgUrl":"String"
+    }
+  ]
 }
 </pre>
