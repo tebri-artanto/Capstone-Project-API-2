@@ -74,8 +74,7 @@ const getArtikel = async (req, res) => {
 
     if (artikel.length === 0) {
       const response = new Response.Error(true, "No results found");
-      res.status(httpStatus.BAD_REQUEST).json(response);
-      return;
+      return res.status(httpStatus.BAD_REQUEST).json(response);
     } else {
       artikel.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
       const response = new Response.Success(false, "Artikel fetched successfully", artikel);
