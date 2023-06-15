@@ -4,13 +4,12 @@ const Pengepul = require("../Model/Pengepul");
 const pengepulValidator = require("../Utils/PengepulValidator");
 
 const pengepulSignUp = async (req, res) => {
-  let response = null;
   try {
     const request = await pengepulValidator.validateAsync(req.body);
 
     const pengepul = await Pengepul.findOne({ username: req.user.username });
     if (pengepul) {
-      response = new Response.Error(false, "You are already a Collector");
+      const response = new Response.Error(false, "You are already a Collector");
       return res.status(httpStatus.OK).json(response);
     }
 
@@ -20,17 +19,16 @@ const pengepulSignUp = async (req, res) => {
     const newPengepul = new Pengepul(request);
     const result = await newPengepul.save();
 
-    response = new Response.Success(false, "You are now a Collector", result);
+    const response = new Response.Success(false, "You are now a Collector", result);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
-    response = new Response.Error(true, error.message);
+    const response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
 
 
 const getPengepul = async (req, res) => {
-  let response = null;
   try {
     const { input } = req.query;
 
@@ -46,17 +44,16 @@ const getPengepul = async (req, res) => {
     const pengepul = await Pengepul.find(query);
 
     if (pengepul.length === 0) {
-      response = new Response.Error(true, "No results found");
-      res.status(httpStatus.BAD_REQUEST).json(response);
-      return;
+      const response = new Response.Error(true, "No results found");
+      return res.status(httpStatus.BAD_REQUEST).json(response);
     } else {
       pengepul.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
-      response = new Response.Success(false, "Results found", pengepul);
+      const response = new Response.Success(false, "Results found", pengepul);
     }
 
     res.status(httpStatus.OK).json(response);
   } catch (error) {
-    response = new Response.Error(true, error.message);
+    const response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
@@ -91,21 +88,20 @@ const deletePengepul = async (req,res) =>{
 }
 
 const updatePengepul = async (req, res) => {
-  let response = null;  
   try {
     const pengepul = await Pengepul.findOne({ username : req.user.username });
     if (!pengepul) {
-      response = new Response.Error(true, "You don't have access to update this Pengepul");
+      const response = new Response.Error(true, "You don't have access to update this Pengepul");
       return res.status(httpStatus.BAD_REQUEST).json(response);
     }
 
     await pengepulValidator.validateAsync(req.body);
     await Pengepul.findByIdAndUpdate(pengepul.id, req.body); 
 
-    response = new Response.Success(false, "Pengepul Update success", pengepul);
+    const response = new Response.Success(false, "Pengepul Update success", pengepul);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
-    response = new Response.Error(true, error.message);
+    const response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
