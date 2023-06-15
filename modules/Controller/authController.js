@@ -5,6 +5,16 @@ const User = require("../Model/User");
 const userValidator = require("../Utils/UserValidator");
 const logInValidator = require("../Utils/logInValidator");
 const bcrypt = require("../Utils/bcrypt");
+const { SecretManagerServiceClient } = require("@google-cloud/secret-manager");
+
+const client = new SecretManagerServiceClient();
+const getSecretValue = async () => {
+  const [version] = await client.accessSecretVersion({
+    name: "projects/377381526885/secrets/key/versions/1",
+  });
+  const connectionString = version.payload.data.toString("utf8");
+  return connectionString;
+};
 
 const signUp = async (req, res) => {
   let response = null;
@@ -43,6 +53,7 @@ const signUp = async (req, res) => {
 const logIn = async (req, res) => {
   let response = null;
   const signInErrorMessage = "Invalid email or password";
+  const connectionString = await getSecretValue();
   try {
     const request = await logInValidator.validateAsync(req.body);
 
@@ -63,7 +74,7 @@ const logIn = async (req, res) => {
       return;
     }
 
-    const createJwtToken = jwt.sign({ id: user._id }, process.env.KEY);
+    const createJwtToken = jwt.sign({ id: user._id }, connectionString);
     const data = { token: createJwtToken, username: user.username };
     response = new Response.Success(false, "Login Success", data);
     res.status(httpStatus.OK).json(response);
