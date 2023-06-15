@@ -47,17 +47,16 @@ const postArtikel = async (req, res) => {
     const image = new Artikel(request);
     const result = await image.save();
 
-    response = new Response.Success(false, "Success Adding Artikel", result);
+    const response = new Response.Success(false, "Success Adding Artikel", result);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
-    response = new Response.Error(true, error.message);
+    const response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
 
 
 const getArtikel = async (req, res) => {
-  let response = null;
   try {
     const { input } = req.query;
     let query = {};
@@ -74,23 +73,22 @@ const getArtikel = async (req, res) => {
     const artikel = await Artikel.find(query);
 
     if (artikel.length === 0) {
-      response = new Response.Error(true, "No results found");
+      const response = new Response.Error(true, "No results found");
       res.status(httpStatus.BAD_REQUEST).json(response);
       return;
     } else {
       artikel.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
-      response = new Response.Success(false, "Artikel fetched successfully", artikel);
+      const response = new Response.Success(false, "Artikel fetched successfully", artikel);
       res.status(httpStatus.OK).json(response);
     }
 
   } catch (error) {
-    response = new Response.Error(true, error.message);
+    const response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
 
 const deleteArtikel = async (req, res) => {
-  let response = null;
   try {
     const { id } = req.params;
     const { username } = req.user;
@@ -105,13 +103,12 @@ const deleteArtikel = async (req, res) => {
     const response = new Response.Success(false, "Artikel Deleted success", artikel);
     res.status(httpStatus.OK).json(response)
   } catch (error) {
-    response = new Response.Error(true, error.message);
+    const response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
 
 const updateArtikel = async (req, res) => {
-  let response = null;
   try {
     const { id } = req.params;
     const { username } = req.user;
@@ -128,7 +125,7 @@ const updateArtikel = async (req, res) => {
     const response = new Response.Success(false, "Artikel Update success", artikel);
     res.status(httpStatus.OK).json(response)
   } catch (error) {
-    response = new Response.Error(true, error.message);
+    const response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };

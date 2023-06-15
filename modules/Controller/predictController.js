@@ -50,10 +50,10 @@ const postPredictImage = async (req, res) => {
       headers: formData.getHeaders(),
     });
     const predictionResult = cloudRunResponse.data;
-    response = new Response.Success(false, "Success", predictionResult);
+    const response = new Response.Success(false, "Success", predictionResult);
     res.status(httpStatus.OK).json(response);
   } catch (error) {
-    response = new Response.Error(true, error.message);
+    const response = new Response.Error(true, error.message);
     res.status(httpStatus.BAD_REQUEST).json(response);
   }
 };
