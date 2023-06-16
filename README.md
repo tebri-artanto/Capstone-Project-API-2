@@ -10,9 +10,15 @@ For the backend API, we use **express.js** to make the endpoint. We deployed API
 * URL : https://capstone-project-387217.et.r.appspot.com/signup
 <pre>
 {
- "username":"String",
- "email":"String",
- "password":"String"
+  "error": "boolean",
+  "message": "string",
+  "data": [
+    {
+       "username":"String",
+       "email":"String",
+       "password":"String"
+    }
+  ]
 }
 </pre>
 
@@ -21,8 +27,14 @@ For the backend API, we use **express.js** to make the endpoint. We deployed API
 * URL : https://capstone-project-387217.et.r.appspot.com/login
 <pre>
 {
- "email":"String",
- "password":"String"
+  "error": "boolean",
+  "message": "string",
+  "data": [
+    {
+      "token":"String",
+      "username":"String"
+    }
+  ]
 }
 </pre>
 
@@ -32,6 +44,13 @@ For the backend API, we use **express.js** to make the endpoint. We deployed API
 * Header : Bearer Token
 * Body : form-data/multipart
 * URL : https://capstone-project-387217.et.r.appspot.com/predictImage
+<pre>
+{
+  "error": "boolean",
+  "message": "string",
+  "data": "string"
+}
+</pre>
 
 # Pengepul
 ## Get Pengepul
@@ -39,11 +58,17 @@ For the backend API, we use **express.js** to make the endpoint. We deployed API
 * URL : https://capstone-project-387217.et.r.appspot.com/pengepul/
 <pre>
 {
- "contact":"String",
- "location":"String",
- "description":"String",
- "lat":"Number",
- "lon":"Number"
+  "error": "boolean",
+  "message": "string",
+  "data": [
+    {
+       "contact":"String",
+       "location":"String",
+       "description":"String",
+       "lat":"Number",
+       "lon":"Number"
+     }
+  ]
 }
 </pre>
 
@@ -53,11 +78,17 @@ For the backend API, we use **express.js** to make the endpoint. We deployed API
 * URL : https://capstone-project-387217.et.r.appspot.com/pengepul/add
 <pre>
 {
- "contact":"String",
- "location":"String",
- "description":"String",
- "lat":"Number",
- "lon":"Number"
+  "error": "boolean",
+  "message": "string",
+  "data": [
+    {
+       "contact":"String",
+       "location":"String",
+       "description":"String",
+       "lat":"Number",
+       "lon":"Number"
+     }
+  ]
 }
 </pre>
 
@@ -67,11 +98,17 @@ For the backend API, we use **express.js** to make the endpoint. We deployed API
 * URL : https://capstone-project-387217.et.r.appspot.com/pengepul/update
 <pre>
 {
- "contact":"String",
- "location":"String",
- "description":"String",
- "lat":"Number",
- "lon":"Number"
+  "error": "boolean",
+  "message": "string",
+  "data": [
+    {
+       "contact":"String",
+       "location":"String",
+       "description":"String",
+       "lat":"Number",
+       "lon":"Number"
+     }
+  ]
 }
 </pre>
 
@@ -81,11 +118,17 @@ For the backend API, we use **express.js** to make the endpoint. We deployed API
 * URL : https://capstone-project-387217.et.r.appspot.com/pengepul/delete
 <pre>
 {
- "contact":"String",
- "location":"String",
- "description":"String",
- "lat":"Number",
- "lon":"Number"
+  "error": "boolean",
+  "message": "string",
+  "data": [
+    {
+       "contact":"String",
+       "location":"String",
+       "description":"String",
+       "lat":"Number",
+       "lon":"Number"
+    }
+  ]
 }
 </pre>
 
@@ -95,11 +138,17 @@ For the backend API, we use **express.js** to make the endpoint. We deployed API
 * URL : https://capstone-project-387217.et.r.appspot.com/artikel/
 <pre>
 {
- "title":"String"
- "content":"String",
- "imgUrl":"String",
- "jenisSampah":"String",
- "username":"String"
+  "error": "boolean",
+  "message": "string",
+  "data": [
+    {
+       "title":"String",
+       "content":"String",
+       "imgUrl":"String",
+       "jenisSampah":"String",
+       "username":"String"
+    }
+  ]
 }
 </pre>
 
