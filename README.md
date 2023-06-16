@@ -1,3 +1,4 @@
+- For the main repository you can go to this [repository](https://github.com/ignatiusbarry69/ALL-TRASHOLUTION)
 # Description
 
 For the backend API, we use **express.js** to make the endpoint. We deployed API in **GCP** using **app engine**, and the configure in [app.yaml](app.yaml). Beside that we also deploy the machine learning in **cloud run**. When user using the feature predict in Android, the images/pictures taken by users will store in **cloud storage**. For database we used **mongoDB Atlas** to store data like users, pengepuls, and articles.
